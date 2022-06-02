@@ -3,3 +3,5 @@
 # terraform
 .terraform
 myplan
+terraform.tfstate
+terraform.tfstate.backup
