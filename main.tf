@@ -47,45 +47,17 @@ resource "aws_dynamodb_table" "main-table" {
     Environment = var.environment
   }
 }
-#
-# REMBER ONLY UNCOMMENT ONE OF THE TWO STEPS BELOW. THE Go script requires compiling, instructions provided in the README
-#
-###################################
-# Execut AWS CLI script  Option 1/2
-###################################
-# resource "null_resource" "init-db" {
 
-// This will cause the upload script to only execute when the table changes id (recreate). 
-#   triggers = {
-#     new = aws_dynamodb_table.main-table.id
-#   }
-#   provisioner "local-exec" {
-#     command = <<EOT
-#       aws dynamodb batch-write-item --request-items file://static/formatted-data.json --endpoint-url ${var.dynamodb-addr}
-#     EOT
-#   }
-#   depends_on = [aws_dynamodb_table.main-table]
-# }
+resource "null_resource" "init-db" {
 
-
-#####################################
-# Execut Go binary script Option 2/2
-#####################################
-resource "null_resource" "init-db-go" {
   // This will cause the upload script to only execute when the table changes id (recreate). 
   triggers = {
     new = aws_dynamodb_table.main-table.id
   }
   provisioner "local-exec" {
     command = <<EOT
-      ./upload-logic
+      aws dynamodb batch-write-item --request-items file://static/formatted-data.json --endpoint-url ${var.dynamodb-addr}
     EOT
-    environment = {
-      TABLE_NAME = aws_dynamodb_table.main-table.id
-      REGION = var.region
-      DYNAMODB_ADDR = var.dynamodb-addr
-      JSON_PATH = var.json-file-path
-    }
   }
   depends_on = [aws_dynamodb_table.main-table]
 }
