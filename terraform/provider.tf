@@ -21,7 +21,7 @@ resource "aws_lambda_layer_version" "example" {
 
 data "archive_file" "lambda_zip" {
   type        = "zip"
-  source_file = "src/services/index.js"
+  source_file = "../src/services/index.js"
   output_path = "lambda_function.zip"
 }
 

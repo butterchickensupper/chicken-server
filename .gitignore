@@ -2,6 +2,7 @@
 
 # terraform
 .terraform
-myplan
+terraform/myplan
+terraform/*.zip
 terraform.tfstate
 terraform.tfstate.backup

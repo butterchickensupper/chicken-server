@@ -1,0 +1,22 @@
+{
+  "name": "chicken-server",
+  "version": "1.0.0",
+  "description": "TF + Docker + AWS + DynamoDB",
+  "main": "index.js",
+  "scripts": {
+    "tf:init": "cd terraform && terraform init",
+    "tf:plan": "cd terraform && terraform plan -out=myplan",
+    "tf:apply": "cd terraform && terraform apply -auto-approve myplan",
+    "tf:destroy": "cd terraform && terraform destroy -auto-approve"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/butterchickensupper/chicken-server.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/butterchickensupper/chicken-server/issues"
+  },
+  "homepage": "https://github.com/butterchickensupper/chicken-server#readme"
+}
