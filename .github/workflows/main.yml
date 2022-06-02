@@ -15,13 +15,13 @@ jobs:
 
       - name: Terraform Format
         id: fmt
-        run: terraform fmt -check
+        run: npm run tf:check
 
       - name: Terraform Init
-        run: npm tf:init
+        run: npm run tf:init
 
       - name: Terraform Plan
-        run: npm tf:plan
+        run: npm run tf:plan
 
       - name: Terraform Plan Status
         if: steps.plan.outcome == 'failure'
