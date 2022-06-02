@@ -9,7 +9,6 @@ resource "aws_dynamodb_table" "main-table" {
   hash_key       = "orderId"
   range_key      = "customerId"
 
-
   attribute {
     name = "orderId"
     type = "S"
@@ -24,7 +23,6 @@ resource "aws_dynamodb_table" "main-table" {
     name = "shipped"
     type = "S"
   }
-
 
   local_secondary_index {
     name            = "lsi-orderId-customerId"
@@ -56,7 +54,7 @@ resource "null_resource" "init-db" {
   }
   provisioner "local-exec" {
     command = <<EOT
-      aws dynamodb batch-write-item --request-items file://../static/formatted-data.json --endpoint-url ${var.dynamodb-addr}
+      aws dynamodb batch-write-item --request-items ${var.json-file-path} --endpoint-url ${var.dynamodb-addr}
     EOT
   }
   depends_on = [aws_dynamodb_table.main-table]
