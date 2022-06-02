@@ -1,7 +1,28 @@
 # Chicken Server
 
-This is an example project to showcase how to use DynamoDB locally while leveraging Terraform, localstack, and noSQL Workbench for DynamoDB.
+TF + Docker + AWS + DynamoDB
 
-## Changing JSON Content
+## Local Dev
 
-Leverage the AWS CLI approach then follow the same steps, either replace `static/formatted-data.json`
+Run the following command in the root folder
+
+```docker
+docker-compose up -d
+```
+
+## Deploy the application
+
+```terraform
+terraform init && terraform plan -out="myplan"
+terraform apply -auto-approve myplan
+```
+
+## View The Data
+
+NoSQL Workbench should be used to view the local dynamoDb tables. Under Operation Builder, create new local connection for port: 4566.
+
+## Clean Up
+
+```terraform
+terraform destroy -auto-approve
+```
