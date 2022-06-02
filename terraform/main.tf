@@ -56,7 +56,7 @@ resource "null_resource" "init-db" {
   }
   provisioner "local-exec" {
     command = <<EOT
-      aws dynamodb batch-write-item --request-items file://static/formatted-data.json --endpoint-url ${var.dynamodb-addr}
+      aws dynamodb batch-write-item --request-items file://../static/formatted-data.json --endpoint-url ${var.dynamodb-addr}
     EOT
   }
   depends_on = [aws_dynamodb_table.main-table]

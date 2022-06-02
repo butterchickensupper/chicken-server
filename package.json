@@ -4,6 +4,8 @@
   "description": "TF + Docker + AWS + DynamoDB",
   "main": "index.js",
   "scripts": {
+    "docker:init": "docker-compose up -d",
+    "docker:destroy": "docker-compose rm",
     "tf:init": "cd terraform && terraform init",
     "tf:plan": "cd terraform && terraform plan -out=myplan",
     "tf:apply": "cd terraform && terraform apply -auto-approve myplan",

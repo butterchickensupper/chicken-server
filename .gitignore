@@ -1,7 +1,7 @@
 .temp
 
 # terraform
-.terraform
+terraform/.terraform
 terraform/myplan
 terraform/*.zip
 terraform.tfstate
