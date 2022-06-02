@@ -1,5 +1,7 @@
 # Chicken Server
 
+[![CI Build](https://github.com/butterchickensupper/chicken-server/actions/workflows/main.yml/badge.svg)](https://github.com/butterchickensupper/chicken-server/actions/workflows/main.yml)
+
 TF + Docker + AWS + DynamoDB
 
 ## Local Dev
