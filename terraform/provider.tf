@@ -15,18 +15,18 @@ provider "aws" {
 }
 
 resource "aws_lambda_layer_version" "example" {
-  layer_name          = "lambda_layer_name"
+  layer_name          = "ChickenServer"
   compatible_runtimes = ["nodejs14.x"]
 }
 
 data "archive_file" "lambda_zip" {
   type        = "zip"
   source_file = "../src/services/index.js"
-  output_path = "lambda_function.zip"
+  output_path = "service.zip"
 }
 
 resource "aws_lambda_function" "test_lambda" {
-  filename         = "lambda_function.zip"
+  filename         = "service.zip"
   function_name    = "test_lambda"
   role             = aws_iam_role.iam_for_lambda_tf.arn
   handler          = "index.handler"
