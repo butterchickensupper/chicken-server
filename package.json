@@ -8,6 +8,7 @@
     "docker:stop": "docker-compose down && docker-compose rm",
     "tf:init": "cd terraform && terraform init",
     "tf:check": "cd terraform && terraform fmt -check",
+    "tf:validate": "cd terraform && terraform validate",
     "tf:plan": "cd terraform && terraform plan -out=myplan -var-file=terraform.tfvars",
     "tf:apply": "cd terraform && terraform apply -auto-approve myplan",
     "tf:destroy": "cd terraform && terraform destroy -auto-approve"
