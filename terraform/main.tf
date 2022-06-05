@@ -24,12 +24,6 @@ resource "aws_dynamodb_table" "main-table" {
     type = "S"
   }
 
-  local_secondary_index {
-    name            = "lsi-orderId-customerId"
-    range_key       = "customerId"
-    projection_type = "ALL"
-  }
-
   global_secondary_index {
     name            = "gsi-shipped"
     hash_key        = "orderId"

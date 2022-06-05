@@ -1,3 +1,6 @@
+"use strict";
+
 exports.handler = async (event) => {
-  return event.Details.Parameters.CustomerCallbackNumber;
+  console.log(event);
+  return "done";
 };

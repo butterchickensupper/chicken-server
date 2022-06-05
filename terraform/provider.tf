@@ -9,20 +9,21 @@ provider "aws" {
 
   endpoints {
     dynamodb = "http://localhost:4566"
-    lambda   = "http://localhost:4574"
-    iam      = "http://localhost:4593"
+    lambda   = "http://localhost:4566"
+    iam      = "http://localhost:4566"
   }
-}
-
-resource "aws_lambda_layer_version" "example" {
-  layer_name          = "ChickenServer"
-  compatible_runtimes = ["nodejs14.x"]
 }
 
 data "archive_file" "lambda_zip" {
   type        = "zip"
   source_file = "../src/services/index.js"
   output_path = "service.zip"
+}
+
+data "archive_file" "hello_lambda_zip" {
+  type        = "zip"
+  source_file = "../src/services/hello.js"
+  output_path = "hello.zip"
 }
 
 resource "aws_lambda_function" "test_lambda" {
@@ -32,7 +33,15 @@ resource "aws_lambda_function" "test_lambda" {
   handler          = "index.handler"
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
   runtime          = "nodejs14.x"
-  layers           = [aws_lambda_layer_version.example.arn]
+}
+
+resource "aws_lambda_function" "test_hello_lambda" {
+  filename         = "hello.zip"
+  function_name    = "test_hello_lambda"
+  role             = aws_iam_role.iam_for_lambda_tf.arn
+  handler          = "hello.handler"
+  source_code_hash = data.archive_file.lambda_zip.output_base64sha256
+  runtime          = "nodejs14.x"
 }
 
 resource "aws_iam_role" "iam_for_lambda_tf" {
@@ -53,4 +62,9 @@ resource "aws_iam_role" "iam_for_lambda_tf" {
   ]
 }
 EOF
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_policy" {
+  role       = aws_iam_role.iam_for_lambda_tf.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
