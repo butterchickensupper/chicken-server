@@ -28,10 +28,10 @@ resource "aws_lambda_function" "test_hello_lambda" {
   runtime          = "nodejs14.x"
 }
 
-resource "aws_cloudwatch_log_group" "lambda_log_group" {
-  name              = "aws/lambda/${aws_lambda_function.test_hello_lambda.function_name}"
-  retention_in_days = 30
-}
+# resource "aws_cloudwatch_log_group" "lambda_logs" {
+#   name              = "aws/lambda/${aws_lambda_function.test_hello_lambda.function_name}"
+#   retention_in_days = 30
+# }
 
 resource "aws_iam_role" "iam_for_lambda_tf" {
   name = "iam_for_lambda_tf"
