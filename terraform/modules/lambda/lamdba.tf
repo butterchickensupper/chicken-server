@@ -28,6 +28,15 @@ resource "aws_lambda_function" "hello_lambda" {
   runtime          = "nodejs14.x"
 }
 
+resource "aws_lambda_function" "hello_get_lambda" {
+  filename         = "hello.zip"
+  function_name    = "hello_get_lambda"
+  role             = aws_iam_role.iam_for_lambda_tf.arn
+  handler          = "hello.get"
+  source_code_hash = data.archive_file.lambda_zip.output_base64sha256
+  runtime          = "nodejs14.x"
+}
+
 # resource "aws_cloudwatch_log_group" "lambda_logs" {
 #   name              = "aws/lambda/${aws_lambda_function.hello_lambda.function_name}"
 #   retention_in_days = 30
