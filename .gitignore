@@ -8,3 +8,6 @@ terraform/myplan
 terraform/*.zip
 terraform.tfstate
 terraform.tfstate.backup
+
+**/*.d.ts
+**/*.js
