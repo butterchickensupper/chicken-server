@@ -1,3 +1,9 @@
+variable "lambda_module" {}
+
+output "module_that_was_input" {
+  value = var.lambda_module
+}
+
 resource "aws_api_gateway_rest_api" "rest_api" {
   name = var.rest_api_name
 }
@@ -12,6 +18,13 @@ resource "aws_api_gateway_method" "rest_api_get_method" {
   rest_api_id   = aws_api_gateway_rest_api.rest_api.id
   resource_id   = aws_api_gateway_resource.rest_api_resource.id
   http_method   = "GET"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_method" "rest_api_post_method" {
+  rest_api_id   = aws_api_gateway_rest_api.rest_api.id
+  resource_id   = aws_api_gateway_resource.rest_api_resource.id
+  http_method   = "POST"
   authorization = "NONE"
 }
 
@@ -45,4 +58,13 @@ resource "aws_api_gateway_integration_response" "rest_api_get_method_integration
       body = "Hello from the movies API!"
     })
   }
+}
+
+resource "aws_lambda_permission" "apigw" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = var.lambda_module.lambda_function_name
+  principal     = "apigateway.amazonaws.com"
+
+  source_arn = "${aws_api_gateway_rest_api.rest_api.execution_arn}/*/*/*"
 }

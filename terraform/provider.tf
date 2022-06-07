@@ -15,11 +15,3 @@ provider "aws" {
     iam        = "http://localhost:4566"
   }
 }
-
-module "api_gateway" {
-  source = "./modules/api_gateway"
-}
-
-module "lambda" {
-  source = "./modules/lambda"
-}

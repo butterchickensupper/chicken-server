@@ -53,3 +53,14 @@ resource "null_resource" "init-db" {
   }
   depends_on = [aws_dynamodb_table.main-table]
 }
+
+########################
+# child modules
+########################
+module "lambda" {
+  source = "./modules/lambda"
+}
+module "api_gateway" {
+  source        = "./modules/api_gateway"
+  lambda_module = module.lambda
+}
