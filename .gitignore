@@ -9,10 +9,6 @@ terraform/*.zip
 terraform.tfstate
 terraform.tfstate.backup
 
-**/*.d.ts
-*.js
-**/*.js
-
 # compiled output
 /dist
 /tmp

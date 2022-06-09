@@ -9,10 +9,9 @@
     "tf:init": "cd terraform && terraform init",
     "tf:check": "cd terraform && terraform fmt -check",
     "tf:validate": "cd terraform && terraform validate",
-    "tf:plan": "tsc && cd terraform && terraform plan -out=myplan -var-file=terraform.tfvars",
+    "tf:plan": "cd terraform && terraform plan -out=myplan -var-file=terraform.tfvars",
     "tf:apply": "cd terraform && terraform apply -auto-approve myplan",
-    "tf:destroy": "cd terraform && terraform destroy -auto-approve",
-    "lint": "eslint src --ext .ts --fix"
+    "tf:destroy": "cd terraform && terraform destroy -auto-approve"
   },
   "repository": {
     "type": "git",
@@ -29,10 +28,6 @@
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.98",
-    "@types/node": "^17.0.40",
-    "@typescript-eslint/eslint-plugin": "^5.27.0",
-    "@typescript-eslint/parser": "^5.27.0",
-    "eslint": "^8.17.0",
-    "typescript": "^4.7.3"
+    "@types/node": "^17.0.40"
   }
 }
