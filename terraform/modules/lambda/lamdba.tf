@@ -1,11 +1,11 @@
 data "archive_file" "lambda_zip" {
   type        = "zip"
   source_file = "../src/services/order/index.js"
-  output_path = "order.zip"
+  output_path = ".terraform/order.zip"
 }
 
 resource "aws_lambda_function" "hello_lambda" {
-  filename         = "order.zip"
+  filename         = ".terraform/order.zip"
   function_name    = "hello_lambda"
   role             = aws_iam_role.iam_for_lambda_tf.arn
   handler          = "hello.handler"
@@ -14,7 +14,7 @@ resource "aws_lambda_function" "hello_lambda" {
 }
 
 resource "aws_lambda_function" "hello_get_lambda" {
-  filename         = "order.zip"
+  filename         = ".terraform/order.zip"
   function_name    = "hello_get_lambda"
   role             = aws_iam_role.iam_for_lambda_tf.arn
   handler          = "hello.get"
