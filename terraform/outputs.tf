@@ -9,10 +9,6 @@ output "test12" {
   value = module.dynamo.main-table-arn
 }
 
-output "test123" {
-  value = module.dynamo.main-table-stream-arn
-}
-
 ########################
 # lambda module
 ########################
