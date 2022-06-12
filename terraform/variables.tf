@@ -22,6 +22,6 @@ variable "dynamodb-addr" {
 
 variable "json-file-path" {
   type        = string
-  description = "The file path to the JSON mock data"
+  description = "The file path to the menu data"
   default     = null
 }

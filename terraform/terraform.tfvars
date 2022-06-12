@@ -1,4 +1,4 @@
 environment    = "dev"
-table-name     = "shipping-south-america"
+table-name     = "menu"
 region         = "us-east-1"
-json-file-path = "file://../static/formatted-data.json"
+json-file-path = "file://data/menu.json"

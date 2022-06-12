@@ -6,34 +6,18 @@ resource "aws_dynamodb_table" "main-table" {
   billing_mode   = "PROVISIONED"
   read_capacity  = 2
   write_capacity = 2
-  hash_key       = "orderId"
-  range_key      = "customerId"
+  hash_key       = "partitionKey"
+  range_key      = "sortKey"
 
   attribute {
-    name = "orderId"
+    name = "partitionKey"
     type = "S"
   }
 
   attribute {
-    name = "customerId"
+    name = "sortKey"
     type = "S"
   }
-
-  attribute {
-    name = "shipped"
-    type = "S"
-  }
-
-  global_secondary_index {
-    name            = "gsi-shipped"
-    hash_key        = "orderId"
-    range_key       = "shipped"
-    write_capacity  = 1
-    read_capacity   = 1
-    projection_type = "ALL"
-  }
-
-
   tags = {
     Name        = "${var.table-name}-${var.environment}"
     Environment = var.environment
@@ -41,7 +25,6 @@ resource "aws_dynamodb_table" "main-table" {
 }
 
 resource "null_resource" "init-db" {
-
   // This will cause the upload script to only execute when the table changes id (recreate). 
   triggers = {
     new = aws_dynamodb_table.main-table.id
