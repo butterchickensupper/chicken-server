@@ -2,7 +2,7 @@
 
 [![CI Build](https://github.com/butterchickensupper/chicken-server/actions/workflows/main.yml/badge.svg)](https://github.com/butterchickensupper/chicken-server/actions/workflows/main.yml)
 
--TF + AWS
+TF + AWS
 -local development uses localstack
 
 ## Local Dev
