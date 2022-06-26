@@ -26,13 +26,24 @@ The first command will build the source of your application. The second command 
 
 ## Use the AWS SAM CLI to build and test locally
 
+Ensure dynamodb docker image is running.
+
+```bash
+docker-compose up -d
+docker-compose down
+```
+
+Create the dynamodb table
+
+```bash
+aws dynamodb create-table --table-name SampleTable --attribute-definitions AttributeName=id,AttributeType=S --key-schema AttributeName=id,KeyType=HASH --billing-mode PAY_PER_REQUEST --endpoint-url http://localhost:8000
+```
+
 Build your application by using the `sam build` command.
 
 ```bash
 my-application$ sam build
 ```
-
-The AWS SAM CLI installs dependencies that are defined in `package.json`, creates a deployment package, and saves it in the `.aws-sam/build` folder.
 
 Test a single function by invoking it directly with a test event. An event is a JSON document that represents the input that the function receives from the event source. Test events are included in the `events` folder in this project.
 

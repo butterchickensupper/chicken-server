@@ -1,0 +1,21 @@
+version: '3.5'
+
+services:
+  ddb_local:
+    container_name: dev-dynamodb
+    image: amazon/dynamodb-local
+    networks:
+      - backend
+    ports:
+      - '8000:8000'
+    volumes:
+      - dynamodata:/home/dynamodblocal
+    working_dir: /home/dynamodblocal
+    command: '-jar DynamoDBLocal.jar -sharedDb -dbPath .'
+
+networks:
+  backend:
+    name: lambda-local
+
+volumes:
+  dynamodata: {}
