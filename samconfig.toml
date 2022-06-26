@@ -1,0 +1,11 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "chicken-service"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-u96lz4j56c1k"
+s3_prefix = "chicken-service"
+region = "us-east-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+image_repositories = []
