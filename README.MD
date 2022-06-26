@@ -1,31 +1,121 @@
-# Chicken Server
+# sam-app
 
-[![CI Build](https://github.com/butterchickensupper/chicken-server/actions/workflows/main.yml/badge.svg)](https://github.com/butterchickensupper/chicken-server/actions/workflows/main.yml)
+This project contains source code and supporting files for a serverless application that you can deploy with the AWS Serverless Application Model (AWS SAM) command line interface (CLI). It includes the following files and folders:
 
-TF + AWS
--local development uses localstack
-
-## Local Dev
-
-Run the following command in the root folder
-
-```docker
-docker-compose up -d
-```
+- `src` - Code for the application's Lambda function.
+- `events` - Invocation events that you can use to invoke the function.
+- `__tests__` - Unit tests for the application code.
+- `template.yaml` - A template that defines the application's AWS resources.
 
 ## Deploy the application
 
-```terraform
-terraform init && terraform plan -out="myplan"
-terraform apply -auto-approve myplan
+To use the AWS SAM CLI, you need the following tools:
+
+- AWS SAM CLI - [Install the AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html).
+- Node.js - [Install Node.js 14](https://nodejs.org/en/), including the npm package management tool.
+- Docker - [Install Docker community edition](https://hub.docker.com/search/?type=edition&offering=community).
+
+To build and deploy your application for the first time, run the following in your shell:
+
+```bash
+sam build
+sam deploy --guided
 ```
 
-## View The Data
+The first command will build the source of your application. The second command will package and deploy your application to AWS.
 
-NoSQL Workbench should be used to view the local dynamoDb tables. Under Operation Builder, create new local connection for port: 4566.
+## Use the AWS SAM CLI to build and test locally
 
-## Clean Up
+Build your application by using the `sam build` command.
 
-```terraform
-terraform destroy -auto-approve
+```bash
+my-application$ sam build
+```
+
+The AWS SAM CLI installs dependencies that are defined in `package.json`, creates a deployment package, and saves it in the `.aws-sam/build` folder.
+
+Test a single function by invoking it directly with a test event. An event is a JSON document that represents the input that the function receives from the event source. Test events are included in the `events` folder in this project.
+
+Run functions locally and invoke them with the `sam local invoke` command.
+
+The AWS SAM CLI can also emulate your application's API. Use the `sam local start-api` command to run the API locally on port 3000.
+
+```bash
+my-application$ sam local start-api
+my-application$ curl http://localhost:3000/
+```
+
+The AWS SAM CLI reads the application template to determine the API's routes and the functions that they invoke. The `Events` property on each function's definition includes the route and method for each path.
+
+```yaml
+Events:
+  Api:
+    Type: Api
+    Properties:
+      Path: /
+      Method: GET
+```
+
+## Add a resource to your application
+
+The application template uses AWS SAM to define application resources. AWS SAM is an extension of AWS CloudFormation with a simpler syntax for configuring common serverless application resources, such as functions, triggers, and APIs. For resources that aren't included in the [AWS SAM specification](https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md), you can use the standard [AWS CloudFormation resource types](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html).
+
+Update `template.yaml` to add a dead-letter queue to your application. In the **Resources** section, add a resource named **MyQueue** with the type **AWS::SQS::Queue**. Then add a property to the **AWS::Serverless::Function** resource named **DeadLetterQueue** that targets the queue's Amazon Resource Name (ARN), and a policy that grants the function permission to access the queue.
+
+```
+Resources:
+  MyQueue:
+    Type: AWS::SQS::Queue
+  getAllItemsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/get-all-items.getAllItemsHandler
+      Runtime: nodejs14.x
+      DeadLetterQueue:
+        Type: SQS
+        TargetArn: !GetAtt MyQueue.Arn
+      Policies:
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt MyQueue.QueueName
+```
+
+The dead-letter queue is a location for Lambda to send events that could not be processed. It's only used if you invoke your function asynchronously, but it's useful here to show how you can modify your application's resources and function configuration.
+
+Deploy the updated application.
+
+```bash
+my-application$ sam deploy
+```
+
+Open the [**Applications**](https://console.aws.amazon.com/lambda/home#/applications) page of the Lambda console, and choose your application. When the deployment completes, view the application resources on the **Overview** tab to see the new resource. Then, choose the function to see the updated configuration that specifies the dead-letter queue.
+
+## Fetch, tail, and filter Lambda function logs
+
+To simplify troubleshooting, the AWS SAM CLI has a command called `sam logs`. `sam logs` lets you fetch logs that are generated by your Lambda function from the command line. In addition to printing the logs on the terminal, this command has several nifty features to help you quickly find the bug.
+
+**NOTE:** This command works for all Lambda functions, not just the ones you deploy using AWS SAM.
+
+```bash
+my-application$ sam logs -n putItemFunction --stack-name sam-app --tail
+```
+
+**NOTE:** This uses the logical name of the function within the stack. This is the correct name to use when searching logs inside an AWS Lambda function within a CloudFormation stack, even if the deployed function name varies due to CloudFormation's unique resource name generation.
+
+You can find more information and examples about filtering Lambda function logs in the [AWS SAM CLI documentation](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-logging.html).
+
+## Unit tests
+
+Tests are defined in the `__tests__` folder in this project. Use `npm` to install the [Jest test framework](https://jestjs.io/) and run unit tests.
+
+```bash
+my-application$ npm install
+my-application$ npm run test
+```
+
+## Cleanup
+
+To delete the sample application that you created, use the AWS CLI. Assuming you used your project name for the stack name, you can run the following:
+
+```bash
+aws cloudformation delete-stack --stack-name sam-app
 ```
