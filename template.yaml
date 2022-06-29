@@ -1,20 +1,9 @@
-# This is the SAM template that represents the architecture of your serverless application
-# https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-template-basics.html
-
-# The AWSTemplateFormatVersion identifies the capabilities of the template
-# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/format-version-structure.html
 AWSTemplateFormatVersion: 2010-09-09
 Description: >-
   bcs-app
 
-# Transform section specifies one or more macros that AWS CloudFormation uses to process your template
-# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/transform-section-structure.html
-Transform:
-  - AWS::Serverless-2016-10-31
+Transform: AWS::Serverless-2016-10-31
 
-# Resources declares the AWS resources that you want to include in the stack
-# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html
-# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
     Tracing: Active
@@ -22,9 +11,10 @@ Globals:
     TracingEnabled: True
 
 Resources:
-  # Each Lambda function is defined by properties:
-  # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
-
+  MyApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
   # This is a Lambda function config associated with the source code: get-all-items.js
   getAllItemsFunction:
     Type: AWS::Serverless::Function
@@ -50,9 +40,7 @@ Resources:
           Properties:
             Path: /
             Method: GET
-  # Each Lambda function is defined by properties:
-  # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
-
+            RestApiId: !Ref MyApi
   # This is a Lambda function config associated with the source code: get-by-id.js
   getByIdFunction:
     Type: AWS::Serverless::Function
@@ -78,9 +66,7 @@ Resources:
           Properties:
             Path: /{id}
             Method: GET
-  # Each Lambda function is defined by properties:
-  # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
-
+            RestApiId: !Ref MyApi
   # This is a Lambda function config associated with the source code: put-item.js
   putItemFunction:
     Type: AWS::Serverless::Function
@@ -106,9 +92,7 @@ Resources:
           Properties:
             Path: /
             Method: POST
-  # Simple syntax to create a DynamoDB table with a single attribute primary key, more in
-  # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlesssimpletable
-
+            RestApiId: !Ref MyApi
   # DynamoDB table to store item: {id: <ID>, name: <NAME>}
   SampleTable:
     Type: AWS::Serverless::SimpleTable
@@ -116,6 +100,7 @@ Resources:
       PrimaryKey:
         Name: id
         Type: String
+      TableName: SampleTable
       ProvisionedThroughput:
         ReadCapacityUnits: 2
         WriteCapacityUnits: 2
