@@ -8,9 +8,6 @@ jobs:
   #sam-validate-build-test-deploy:
   sam-validate-build:
     runs-on: ubuntu-latest
-    env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     outputs:
       env-name: ${{ steps.env-name.outputs.environment }}
     steps:
