@@ -1,6 +1,4 @@
-# Chicken Server
-
-This project contains source code and supporting files for a serverless application that you can deploy with the AWS Serverless Application Model (AWS SAM) command line interface (CLI). It includes the following files and folders:
+# bcs-app
 
 - `src` - Code for the application's Lambda function.
 - `events` - Invocation events that you can use to invoke the function.
@@ -12,30 +10,27 @@ This project contains source code and supporting files for a serverless applicat
 To use the AWS SAM CLI, you need the following tools:
 
 - AWS SAM CLI - [Install the AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html).
-- Node.js - [Install Node.js 14](https://nodejs.org/en/), including the npm package management tool.
+- Node.js - [Install Node.js 16](https://nodejs.org/en/), including the npm package management tool.
 - Docker - [Install Docker community edition](https://hub.docker.com/search/?type=edition&offering=community).
 
 To build and deploy your application for the first time, run the following in your shell:
 
 ```bash
-npm run build
-npm run deploy
+sam build
+sam deploy
 ```
 
-The first command will build the source of your application. The second command will package and deploy your application to AWS.
+The API Gateway endpoint API will be displayed in the outputs when the deployment is complete.
 
 ## Use the AWS SAM CLI to build and test locally
 
-Ensure dynamodb docker image is running.
+DynamoDB must be started and have the tables created. Example:
 
-```bash
-docker-compose up -d
-docker-compose down
+```
+aws dynamodb list-tables --endpoint-url http://localhost:8000
 ```
 
-Create the dynamodb table
-
-```bash
+```
 aws dynamodb create-table --table-name SampleTable --attribute-definitions AttributeName=id,AttributeType=S --key-schema AttributeName=id,KeyType=HASH --billing-mode PAY_PER_REQUEST --endpoint-url http://localhost:8000
 ```
 
@@ -45,15 +40,25 @@ Build your application by using the `sam build` command.
 my-application$ sam build
 ```
 
+The AWS SAM CLI installs dependencies that are defined in `package.json`, creates a deployment package, and saves it in the `.aws-sam/build` folder.
+
 Test a single function by invoking it directly with a test event. An event is a JSON document that represents the input that the function receives from the event source. Test events are included in the `events` folder in this project.
 
 Run functions locally and invoke them with the `sam local invoke` command.
 
+```bash
+my-application$ sam local invoke putItemFunction --event events/event-post-item.json
+my-application$ sam local invoke getAllItemsFunction --event events/event-get-all-items.json
+```
+
 The AWS SAM CLI can also emulate your application's API. Use the `sam local start-api` command to run the API locally on port 3000.
 
 ```bash
-npm run start
+my-application$ sam local start-api
+my-application$ curl http://localhost:3000/
 ```
+
+Open the [**Applications**](https://console.aws.amazon.com/lambda/home#/applications) page of the Lambda console, and choose your application. When the deployment completes, view the application resources on the **Overview** tab to see the new resource. Then, choose the function to see the updated configuration that specifies the dead-letter queue.
 
 ## Fetch, tail, and filter Lambda function logs
 
@@ -83,5 +88,5 @@ my-application$ npm run test
 To delete the sample application that you created, use the AWS CLI. Assuming you used your project name for the stack name, you can run the following:
 
 ```bash
-aws cloudformation delete-stack --stack-name sam-app
+aws cloudformation delete-stack --stack-name bcs-app
 ```
