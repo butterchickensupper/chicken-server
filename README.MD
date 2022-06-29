@@ -1,4 +1,4 @@
-# bcs-app
+# chicken server
 
 - `src` - Code for the application's Lambda function.
 - `events` - Invocation events that you can use to invoke the function.
@@ -13,7 +13,7 @@ To use the AWS SAM CLI, you need the following tools:
 - Node.js - [Install Node.js 16](https://nodejs.org/en/), including the npm package management tool.
 - Docker - [Install Docker community edition](https://hub.docker.com/search/?type=edition&offering=community).
 
-To build and deploy your application for the first time, run the following in your shell:
+To build and deploy the application:
 
 ```bash
 sam build
@@ -22,25 +22,30 @@ sam deploy
 
 The API Gateway endpoint API will be displayed in the outputs when the deployment is complete.
 
-## Use the AWS SAM CLI to build and test locally
+## Running Locally
 
-DynamoDB must be started and have the tables created. Example:
+Ensure dynamodb docker image is running.
 
+```bash
+npm run start-dynamo
 ```
+
+DynamoDB must be created and have the tables created.
+// TODO: add script for table created locally
+
+```bash
 aws dynamodb list-tables --endpoint-url http://localhost:8000
 ```
 
-```
+```bash
 aws dynamodb create-table --table-name SampleTable --attribute-definitions AttributeName=id,AttributeType=S --key-schema AttributeName=id,KeyType=HASH --billing-mode PAY_PER_REQUEST --endpoint-url http://localhost:8000
 ```
 
-Build your application by using the `sam build` command.
+Build your application by using the `npm run build` command.
 
 ```bash
-my-application$ sam build
+my-application$ npm run build
 ```
-
-The AWS SAM CLI installs dependencies that are defined in `package.json`, creates a deployment package, and saves it in the `.aws-sam/build` folder.
 
 Test a single function by invoking it directly with a test event. An event is a JSON document that represents the input that the function receives from the event source. Test events are included in the `events` folder in this project.
 
@@ -51,14 +56,12 @@ my-application$ sam local invoke putItemFunction --event events/event-post-item.
 my-application$ sam local invoke getAllItemsFunction --event events/event-get-all-items.json
 ```
 
-The AWS SAM CLI can also emulate your application's API. Use the `sam local start-api` command to run the API locally on port 3000.
+Use the `npm run start` command to run the API locally on port 3000.
 
 ```bash
-my-application$ sam local start-api
+my-application$ npm run start
 my-application$ curl http://localhost:3000/
 ```
-
-Open the [**Applications**](https://console.aws.amazon.com/lambda/home#/applications) page of the Lambda console, and choose your application. When the deployment completes, view the application resources on the **Overview** tab to see the new resource. Then, choose the function to see the updated configuration that specifies the dead-letter queue.
 
 ## Fetch, tail, and filter Lambda function logs
 
