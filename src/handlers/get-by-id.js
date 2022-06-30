@@ -5,7 +5,9 @@ const tableName = process.env.SAMPLE_TABLE;
 
 // Create a DocumentClient that represents the query to add an item
 const dynamodb = require('aws-sdk/clients/dynamodb');
-const docClient = new dynamodb.DocumentClient({ endpoint: 'http://ddb_local:8000', region: 'local' });
+const docClient = process.env.IS_OFFLINE === 'true' 
+    ? new dynamodb.DocumentClient({ endpoint: 'http://ddb_local:8000' })
+    : new dynamodb.DocumentClient();
 
 /**
  * A simple example includes a HTTP get method to get one item by id from a DynamoDB table.

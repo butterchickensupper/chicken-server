@@ -95,12 +95,20 @@ Resources:
             RestApiId: !Ref MyApi
   # DynamoDB table to store item: {id: <ID>, name: <NAME>}
   SampleTable:
-    Type: AWS::Serverless::SimpleTable
+    Type: AWS::DynamoDB::Table
     Properties:
-      PrimaryKey:
-        Name: id
-        Type: String
       TableName: SampleTable
+      AttributeDefinitions:
+          # Index attributes
+          - AttributeName: partitionKey
+            AttributeType: S
+          - AttributeName: sortKey
+            AttributeType: S
+      KeySchema:
+          - AttributeName: partitionKey
+            KeyType: HASH
+          - AttributeName: sortKey
+            KeyType: RANGE
       ProvisionedThroughput:
         ReadCapacityUnits: 2
         WriteCapacityUnits: 2
