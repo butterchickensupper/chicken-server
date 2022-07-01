@@ -36,7 +36,7 @@ exports.lambdaHandler = async (event, context) => {
 
     const response = {
         statusCode: 200,
-        body: JSON.stringify(data?.Item?.objectData)
+        body: data?.Item?.objectData // menu is inserted as a string
     };
 
     // All log statements are written to CloudWatch
