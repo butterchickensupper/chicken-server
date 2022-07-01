@@ -15,17 +15,17 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       StageName: Prod
-  # This is a Lambda function config associated with the source code: get-all-items.js
-  getAllItemsFunction:
+  # This is a Lambda function config associated with the source code: get-menu.js
+  getMenuFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/get-all-items.getAllItemsHandler
+      Handler: src/handlers/get-menu.getMenuHandler
       Runtime: nodejs16.x
       Architectures:
         - x86_64
       MemorySize: 128
       Timeout: 100
-      Description: A simple example includes a HTTP get method to get all items from a DynamoDB table.
+      Description: Gets the menu from the dynamodb table.
       Policies:
         # Give Create/Read/Update/Delete Permissions to the SampleTable
         - DynamoDBCrudPolicy:
@@ -38,7 +38,7 @@ Resources:
         Api:
           Type: Api
           Properties:
-            Path: /
+            Path: /menu/
             Method: GET
             RestApiId: !Ref MyApi
   # This is a Lambda function config associated with the source code: get-by-id.js
@@ -100,15 +100,11 @@ Resources:
       TableName: SampleTable
       AttributeDefinitions:
           # Index attributes
-          - AttributeName: partitionKey
-            AttributeType: S
-          - AttributeName: sortKey
+          - AttributeName: id
             AttributeType: S
       KeySchema:
-          - AttributeName: partitionKey
+          - AttributeName: id
             KeyType: HASH
-          - AttributeName: sortKey
-            KeyType: RANGE
       ProvisionedThroughput:
         ReadCapacityUnits: 2
         WriteCapacityUnits: 2

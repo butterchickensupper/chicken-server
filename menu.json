@@ -1,0 +1,12 @@
+{
+    "SampleTable":[
+        {
+            "PutRequest":{
+                "Item": {
+                    "id": { "S": "dev|menu" },
+                    "objectData": { "S": "menu" }
+                }
+            }
+        }
+    ]
+}
