@@ -36,7 +36,7 @@ aws dynamodb list-tables --endpoint-url http://localhost:8000
 ```
 
 ```bash
-aws dynamodb create-table --table-name SampleTable --attribute-definitions 'AttributeName=id,AttributeType=S' --key-schema 'AttributeName=id,KeyType=HASH' --billing-mode PAY_PER_REQUEST --endpoint-url http://localhost:8000
+aws dynamodb create-table --table-name SampleTable --attribute-definitions 'AttributeName=partitionKey,AttributeType=S' 'AttributeName=sortKey,AttributeType=S' --key-schema 'AttributeName=partitionKey,KeyType=HASH' 'AttributeName=sortKey,KeyType=RANGE' --billing-mode PAY_PER_REQUEST --endpoint-url http://localhost:8000
 ```
 
 Create a default menu
@@ -48,14 +48,14 @@ aws dynamodb batch-write-item --request-items file://menu.json --endpoint-url ht
 Build your application by using the `sam build` command.
 
 ```bash
-my-application$ sam build
+sam build
 ```
 
 Use the `sam local start-api` command to run the API locally on port 3000.
 
 ```bash
-my-application$ sam local start-api --template template.yaml --docker-network lambda-local --skip-pull-image -n env.json
-my-application$ curl http://localhost:3000/
+sam local start-api --template template.yaml --docker-network lambda-local --skip-pull-image -n env.json
+curl http://localhost:3000/
 ```
 
 View dynamodb tables by going to [here](http://localhost:8001/)

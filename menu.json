@@ -3,10 +3,11 @@
         {
             "PutRequest":{
                 "Item": {
-                    "id": { "S": "dev|menu" },
+                    "partitionKey": { "S": "dev|menu" },
+                    "sortKey": { "S": "menu" },
                     "objectData": { "S": "menu goes here" },
-                    "createdAt": { "S": "Fri Jul 01 2022 00:44:11 GMT+0000" },
-                    "updatedAt": { "S": "Fri Jul 01 2022 00:44:11 GMT+0000" },
+                    "createdAt": { "S": "1656687325023" },
+                    "updatedAt": { "S": "1656687325023" },
                     "version": { "N": "1" },
                     "transactionId": { "S": "d972592c-0d35-4aa4-aef7-4e73d946cd11" }
                 }
