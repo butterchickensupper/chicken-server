@@ -23,7 +23,7 @@ exports.lambdaHandler = async (event, context) => {
 
     var params = {
         TableName : tableName,
-        Key: { partitionKey: 'dev|menu', rangeKey: 'menu' }
+        Key: { partitionKey: 'dev|menu', sortKey: 'menu' }
     };
     const data = await docClient.get(params).promise();
     console.info('data', [data]);

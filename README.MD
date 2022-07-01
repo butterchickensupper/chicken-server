@@ -26,6 +26,7 @@ Ensure dynamodb docker image is running.
 
 ```bash
 docker-compose up -d
+docker-compose down
 ```
 
 DynamoDB must be created and have the tables created.
@@ -67,7 +68,7 @@ To simplify troubleshooting, the AWS SAM CLI has a command called `sam logs`. `s
 **NOTE:** This command works for all Lambda functions, not just the ones you deploy using AWS SAM.
 
 ```bash
-my-application$ sam logs -n putItemFunction --stack-name sam-app --tail
+sam logs -n putItemFunction --stack-name sam-app --tail
 ```
 
 **NOTE:** This uses the logical name of the function within the stack. This is the correct name to use when searching logs inside an AWS Lambda function within a CloudFormation stack, even if the deployed function name varies due to CloudFormation's unique resource name generation.

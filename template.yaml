@@ -35,6 +35,7 @@ Resources:
         Variables:
           # Make table name accessible as environment variable from function code during execution
           SAMPLE_TABLE: !Ref SampleTable
+          IS_OFFLINE: ""
       Events:
         Api:
           Type: Api
@@ -62,6 +63,7 @@ Resources:
         Variables:
           # Make table name accessible as environment variable from function code during execution
           SAMPLE_TABLE: !Ref SampleTable
+          IS_OFFLINE: ""
       Events:
         Api:
           Type: Api
@@ -89,6 +91,7 @@ Resources:
         Variables:
           # Make table name accessible as environment variable from function code during execution
           SAMPLE_TABLE: !Ref SampleTable
+          IS_OFFLINE: ""
       Events:
         Api:
           Type: Api
