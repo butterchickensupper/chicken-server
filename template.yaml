@@ -57,6 +57,40 @@ Resources:
             Auth:
               ApiKeyRequired: false
 
+  GetOrdersFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/get-orders/
+      Handler: app.lambdaHandler
+      Runtime: nodejs16.x
+      Architectures:
+        - x86_64
+      MemorySize: 128
+      Timeout: 100
+      Description: Returns the orders for BCS.
+      Policies:
+        # Give Create/Read/Update/Delete Permissions to the SampleTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref SampleTable
+      Environment:
+        Variables:
+          SAMPLE_TABLE: !Ref SampleTable
+          IS_OFFLINE: ""
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /orders
+            Method: GET
+            RestApiId: !Ref ChickenApi
+        Options:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ChickenApi
+            Path: /orders
+            Method: options
+            Auth:
+              ApiKeyRequired: false
   SubmitOrderFunction:
     Type: AWS::Serverless::Function
     Properties:
