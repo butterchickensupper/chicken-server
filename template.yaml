@@ -16,34 +16,7 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       StageName: Prod
-  StockCheckerFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html
-    Properties:
-      CodeUri: functions/stock-checker/
-      Handler: app.lambdaHandler
-      Runtime: nodejs16.x
-      Architectures:
-        - x86_64
-      MemorySize: 128
-      Timeout: 100
-      Description: Gets the menu from the dynamodb table.
-      Policies:
-        # Give Create/Read/Update/Delete Permissions to the SampleTable
-        - DynamoDBCrudPolicy:
-            TableName: !Ref SampleTable
-      Environment:
-        Variables:
-          # Make table name accessible as environment variable from function code during execution
-          SAMPLE_TABLE: !Ref SampleTable
-          IS_OFFLINE: ""
-      Events:
-        Api:
-          Type: Api
-          Properties:
-            Path: /a/
-            Method: GET
-            RestApiId: !Ref ChickenApi
-
+      
   GetMenuFunction:
     Type: AWS::Serverless::Function
     Properties:
