@@ -10,6 +10,11 @@ Globals:
     Tracing: Active
   Api:
     TracingEnabled: True
+    Cors:
+      AllowMethods: "'GET,POST,OPTIONS'"
+      AllowHeaders: "'content-type'"
+      AllowOrigin: "'*'"
+      AllowCredentials: true
 
 Resources:
   ChickenApi:
@@ -40,14 +45,22 @@ Resources:
         Api:
           Type: Api
           Properties:
-            Path: /b/
+            Path: /menu
             Method: GET
             RestApiId: !Ref ChickenApi
+        Options:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ChickenApi
+            Path: /menu
+            Method: options
+            Auth:
+              ApiKeyRequired: false
 
-  StockBuyerFunction:
+  SubmitOrderFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: functions/stock-buyer/
+      CodeUri: functions/submit-order/
       Handler: app.lambdaHandler
       Runtime: nodejs16.x
       Architectures:
@@ -68,9 +81,17 @@ Resources:
         Api:
           Type: Api
           Properties:
-            Path: /c/
-            Method: GET
+            Path: /order
+            Method: POST
             RestApiId: !Ref ChickenApi
+        Options:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ChickenApi
+            Path: /order
+            Method: options
+            Auth:
+              ApiKeyRequired: false
 
   SampleTable:
     Type: AWS::DynamoDB::Table
@@ -92,12 +113,9 @@ Resources:
         WriteCapacityUnits: 1
 
 Outputs:
-  # StockTradingStateMachineHourlyTradingSchedule is an implicit Schedule event rule created out of Events key under Serverless::StateMachine
-  # Find out more about other implicit resources you can reference within SAM
-  # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-specification-generated-resources.html
-  StockTradingStateMachineArn:
+  SubmitOrderArn:
     Description: "Stock Trading state machine ARN"
-    Value: !Ref StockBuyerFunction
-  StockTradingStateMachineRole:
-    Description: "IAM Role created for Stock Trading state machine based on the specified SAM Policy Templates"
-    Value: !GetAtt StockBuyerFunction.Arn
+    Value: !Ref SubmitOrderFunction
+  SubmitOrderRole:
+    Description: "IAM Role created based on the specified SAM Policy Templates"
+    Value: !GetAtt SubmitOrderFunction.Arn

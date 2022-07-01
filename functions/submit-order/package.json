@@ -1,12 +1,14 @@
 {
-  "name": "stock_checker",
+  "name": "submit-order",
   "version": "1.0.0",
-  "description": "Mock stock checker for NodeJS",
+  "description": "Submit Order API for BCS",
   "main": "app.js",
-  "repository": "TODO",
+  "repository": "",
   "author": "SAM CLI",
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "aws-sdk": "^2.1167.0"
+  },
   "scripts": {
     "test": "mocha tests/unit/"
   },
