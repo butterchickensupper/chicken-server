@@ -12,7 +12,7 @@ Globals:
     TracingEnabled: True
 
 Resources:
-  MyApi:
+  ChickenApi:
     Type: AWS::Serverless::Api
     Properties:
       StageName: Prod
@@ -42,26 +42,25 @@ Resources:
           Properties:
             Path: /a/
             Method: GET
-            RestApiId: !Ref MyApi
+            RestApiId: !Ref ChickenApi
 
-  StockSellerFunction:
+  GetMenuFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: functions/stock-seller/
+      CodeUri: functions/get-menu/
       Handler: app.lambdaHandler
       Runtime: nodejs16.x
       Architectures:
         - x86_64
       MemorySize: 128
       Timeout: 100
-      Description: A simple example includes a HTTP get method to get one item by id from a DynamoDB table.
+      Description: Returns the menu for BCS.
       Policies:
         # Give Create/Read/Update/Delete Permissions to the SampleTable
         - DynamoDBCrudPolicy:
             TableName: !Ref SampleTable
       Environment:
         Variables:
-          # Make table name accessible as environment variable from function code during execution
           SAMPLE_TABLE: !Ref SampleTable
           IS_OFFLINE: ""
       Events:
@@ -70,7 +69,7 @@ Resources:
           Properties:
             Path: /b/
             Method: GET
-            RestApiId: !Ref MyApi
+            RestApiId: !Ref ChickenApi
 
   StockBuyerFunction:
     Type: AWS::Serverless::Function
@@ -98,7 +97,7 @@ Resources:
           Properties:
             Path: /c/
             Method: GET
-            RestApiId: !Ref MyApi
+            RestApiId: !Ref ChickenApi
 
   SampleTable:
     Type: AWS::DynamoDB::Table

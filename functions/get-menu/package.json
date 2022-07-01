@@ -1,9 +1,9 @@
 {
-  "name": "stock_checker",
+  "name": "get-menu",
   "version": "1.0.0",
-  "description": "Mock stock checker for NodeJS",
+  "description": "Get Menu for BCS",
   "main": "app.js",
-  "repository": "TODO",
+  "repository": "",
   "author": "SAM CLI",
   "license": "MIT",
   "dependencies": {
