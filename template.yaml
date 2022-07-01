@@ -1,8 +1,9 @@
-AWSTemplateFormatVersion: 2010-09-09
-Description: >-
-  bcs-app
-
+AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
+Description: >
+  sam-app
+
+  BCS: Butter Chicken Supper
 
 Globals:
   Function:
@@ -15,11 +16,11 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       StageName: Prod
-  # This is a Lambda function config associated with the source code: get-menu.js
-  getMenuFunction:
-    Type: AWS::Serverless::Function
+  StockCheckerFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html
     Properties:
-      Handler: src/handlers/get-menu.getMenuHandler
+      CodeUri: functions/stock-checker/
+      Handler: app.lambdaHandler
       Runtime: nodejs16.x
       Architectures:
         - x86_64
@@ -38,14 +39,15 @@ Resources:
         Api:
           Type: Api
           Properties:
-            Path: /menu/
+            Path: /a/
             Method: GET
             RestApiId: !Ref MyApi
-  # This is a Lambda function config associated with the source code: get-by-id.js
-  getByIdFunction:
+
+  StockSellerFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/get-by-id.getByIdHandler
+      CodeUri: functions/stock-seller/
+      Handler: app.lambdaHandler
       Runtime: nodejs16.x
       Architectures:
         - x86_64
@@ -67,11 +69,12 @@ Resources:
             Path: /{id}
             Method: GET
             RestApiId: !Ref MyApi
-  # This is a Lambda function config associated with the source code: put-item.js
-  putItemFunction:
+
+  StockBuyerFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/put-item.putItemHandler
+      CodeUri: functions/stock-buyer/
+      Handler: app.lambdaHandler
       Runtime: nodejs16.x
       Architectures:
         - x86_64
@@ -93,23 +96,33 @@ Resources:
             Path: /
             Method: POST
             RestApiId: !Ref MyApi
-  # DynamoDB table to store item: {id: <ID>, name: <NAME>}
+
   SampleTable:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: SampleTable
       AttributeDefinitions:
           # Index attributes
-          - AttributeName: id
+          - AttributeName: partitionKey
+            AttributeType: S
+          - AttributeName: sortKey
             AttributeType: S
       KeySchema:
-          - AttributeName: id
+          - AttributeName: partitionKey
             KeyType: HASH
+          - AttributeName: sortKey
+            KeyType: RANGE
       ProvisionedThroughput:
-        ReadCapacityUnits: 2
-        WriteCapacityUnits: 2
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
 
 Outputs:
-  WebEndpoint:
-    Description: "API Gateway endpoint URL for Prod stage"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+  # StockTradingStateMachineHourlyTradingSchedule is an implicit Schedule event rule created out of Events key under Serverless::StateMachine
+  # Find out more about other implicit resources you can reference within SAM
+  # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-specification-generated-resources.html
+  StockTradingStateMachineArn:
+    Description: "Stock Trading state machine ARN"
+    Value: !Ref StockBuyerFunction
+  StockTradingStateMachineRole:
+    Description: "IAM Role created for Stock Trading state machine based on the specified SAM Policy Templates"
+    Value: !GetAtt StockBuyerFunction.Arn

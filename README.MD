@@ -1,8 +1,6 @@
 # chicken server
 
-- `src` - Code for the application's Lambda function.
-- `events` - Invocation events that you can use to invoke the function.
-- `__tests__` - Unit tests for the application code.
+- `functions` - Code for the application's Lambda functions.
 - `template.yaml` - A template that defines the application's AWS resources.
 
 ## Deploy the application
@@ -27,7 +25,7 @@ The API Gateway endpoint API will be displayed in the outputs when the deploymen
 Ensure dynamodb docker image is running.
 
 ```bash
-npm run start-dynamo
+docker-compose up -d
 ```
 
 DynamoDB must be created and have the tables created.
@@ -47,25 +45,16 @@ Create a default menu
 aws dynamodb batch-write-item --request-items file://menu.json --endpoint-url http://localhost:8000
 ```
 
-Build your application by using the `npm run build` command.
+Build your application by using the `sam build` command.
 
 ```bash
-my-application$ npm run build
+my-application$ sam build
 ```
 
-Test a single function by invoking it directly with a test event. An event is a JSON document that represents the input that the function receives from the event source. Test events are included in the `events` folder in this project.
-
-Run functions locally and invoke them with the `sam local invoke` command.
+Use the `sam local start-api` command to run the API locally on port 3000.
 
 ```bash
-my-application$ sam local invoke putItemFunction --event events/event-post-item.json
-my-application$ sam local invoke getAllItemsFunction --event events/event-get-all-items.json
-```
-
-Use the `npm run start` command to run the API locally on port 3000.
-
-```bash
-my-application$ npm run start
+my-application$ sam local start-api --template template.yaml --docker-network lambda-local --skip-pull-image -n env.json
 my-application$ curl http://localhost:3000/
 ```
 
@@ -87,11 +76,12 @@ You can find more information and examples about filtering Lambda function logs 
 
 ## Unit tests
 
-Tests are defined in the `__tests__` folder in this project. Use `npm` to install the [Jest test framework](https://jestjs.io/) and run unit tests.
+Tests are defined in the `functions/*/tests` folder in this project. Use NPM to install the [Mocha test framework](https://mochajs.org/) and run unit tests.
 
 ```bash
-my-application$ npm install
-my-application$ npm run test
+sam-app$ cd functions/stock-checker
+stock-checker$ npm install
+stock-checker$ npm run test
 ```
 
 ## Cleanup
