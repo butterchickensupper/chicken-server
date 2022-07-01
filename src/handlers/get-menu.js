@@ -16,7 +16,7 @@ exports.getMenuHandler = async (event) => {
 
     var params = {
         TableName : tableName,
-        Key: { id: 'DEV|menu' }
+        Key: { id: 'dev|menu' }
     };
     const data = await docClient.get(params).promise();
     console.info('data', [data]);
