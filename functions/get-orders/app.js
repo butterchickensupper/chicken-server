@@ -1,30 +1,69 @@
-const crypto = require("crypto");
+const dynamodb = require('aws-sdk/clients/dynamodb');
 
-function getRandomInt(max) {
-    return Math.floor(Math.random() * Math.floor(max)) + 1;
-}
+const tableName = process.env.SAMPLE_TABLE;
+const docClient = process.env.IS_OFFLINE === 'true' 
+    ? new dynamodb.DocumentClient({ endpoint: 'http://ddb_local:8000' })
+    : new dynamodb.DocumentClient();
 
 /**
- * Sample Lambda function which mocks the operation of buying a random number of shares for a stock.
- * For demonstration purposes, this Lambda function does not actually perform any  actual transactions. It simply returns a mocked result.
+ * Get all orders for a user
  * 
  * @param {Object} event - Input event to the Lambda function
  * @param {Object} context - Lambda Context runtime methods and attributes
  *
- * @returns {Object} object - Object containing details of the stock buying transaction
+ * @returns {Object} object - Object containing details of the menu
  * 
  */
 exports.lambdaHandler = async (event, context) => {
-    // Get the price of the stock provided as input
-    stock_price = event["stock_price"]
-    var date = new Date();
-    // Mocked result of a stock buying transaction
-    let transaction_result = {
-        'id': crypto.randomBytes(16).toString("hex"), // Unique ID for the transaction
-        'price': stock_price.toString(), // Price of each share
-        'type': "buy", // Type of transaction(buy/ sell)
-        'qty': getRandomInt(10).toString(),  // Number of shares bought / sold(We are mocking this as a random integer between 1 and 10)
-        'timestamp': date.toISOString(),  // Timestamp of the when the transaction was completed
+    if (event.httpMethod !== 'GET') {
+        throw new Error(`getMenuHandler only accept GET method, you tried: ${event.httpMethod}`);
     }
-    return transaction_result
+    // All log statements are written to CloudWatch
+    console.info('received:', [event]);
+
+    var params = {
+        TableName : tableName,
+        KeyConditionExpression: '#pk = :partitionKey AND begins_with(#sk, :sortKey)',
+        ExpressionAttributeNames: {
+            '#pk': 'partitionKey',
+            '#sk': 'sortKey'
+        },
+        ExpressionAttributeValues: {
+            ':partitionKey': 'dev|user-guid',
+            ':sortKey': 'order'
+        }
+    };
+    const data = await docClient.query(params).promise();
+    console.info('data', [data]);
+    if (!data?.Items) {
+        return {
+            statusCode: 404,
+            body: JSON.stringify({ message: 'failed to get orders'})
+        };
+    } 
+ 
+    const body = data?.Items.map((item) => {
+        const order = JSON.parse(item.objectData);
+        return {
+            id: order.id,
+            items: order.items,
+            name: order.name,
+            address: order.address,
+            date: order.date,
+            total: order.total
+        };
+    });
+    const response = {
+        statusCode: 200,
+        headers: {
+            "Access-Control-Allow-Headers" : "Content-Type",
+            "Access-Control-Allow-Origin": "*", // Allow from anywhere 
+            "Access-Control-Allow-Methods": "GET" // Allow only GET request 
+        },
+        body: JSON.stringify(body)
+    };
+
+    // All log statements are written to CloudWatch
+    console.info(`response from: ${event.path} statusCode: ${response.statusCode} body: ${response.body}`);
+    return response;
 };
