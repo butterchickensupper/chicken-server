@@ -37,7 +37,7 @@ aws dynamodb list-tables --endpoint-url http://localhost:8000
 ```
 
 ```bash
-aws dynamodb create-table --table-name SampleTable --attribute-definitions 'AttributeName=partitionKey,AttributeType=S' 'AttributeName=sortKey,AttributeType=S' --key-schema 'AttributeName=partitionKey,KeyType=HASH' 'AttributeName=sortKey,KeyType=RANGE' --billing-mode PAY_PER_REQUEST --endpoint-url http://localhost:8000
+aws dynamodb create-table --table-name dev-butter --attribute-definitions 'AttributeName=partitionKey,AttributeType=S' 'AttributeName=sortKey,AttributeType=S' --key-schema 'AttributeName=partitionKey,KeyType=HASH' 'AttributeName=sortKey,KeyType=RANGE' --billing-mode PAY_PER_REQUEST --endpoint-url http://localhost:8000
 ```
 
 Create a default menu

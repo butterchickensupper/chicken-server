@@ -1,6 +1,6 @@
 const dynamodb = require('aws-sdk/clients/dynamodb');
 
-const tableName = process.env.SAMPLE_TABLE;
+const tableName = process.env.ORDER_TABLE;
 const docClient = process.env.IS_OFFLINE === 'true' 
     ? new dynamodb.DocumentClient({ endpoint: 'http://ddb_local:8000' })
     : new dynamodb.DocumentClient();

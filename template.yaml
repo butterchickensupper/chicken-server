@@ -34,12 +34,12 @@ Resources:
       Timeout: 100
       Description: Returns the menu for BCS.
       Policies:
-        # Give Create/Read/Update/Delete Permissions to the SampleTable
+        # Give Create/Read/Update/Delete Permissions to the OrderTable
         - DynamoDBCrudPolicy:
-            TableName: !Ref SampleTable
+            TableName: !Ref OrderTable
       Environment:
         Variables:
-          SAMPLE_TABLE: !Ref SampleTable
+          ORDER_TABLE: !Ref OrderTable
           IS_OFFLINE: ""
       Events:
         Api:
@@ -69,12 +69,12 @@ Resources:
       Timeout: 100
       Description: Returns the orders for BCS.
       Policies:
-        # Give Create/Read/Update/Delete Permissions to the SampleTable
+        # Give Create/Read/Update/Delete Permissions to the OrderTable
         - DynamoDBCrudPolicy:
-            TableName: !Ref SampleTable
+            TableName: !Ref OrderTable
       Environment:
         Variables:
-          SAMPLE_TABLE: !Ref SampleTable
+          ORDER_TABLE: !Ref OrderTable
           IS_OFFLINE: ""
       Events:
         Api:
@@ -104,12 +104,12 @@ Resources:
       Timeout: 100
       Description: Returns the user settings for BCS.
       Policies:
-        # Give Create/Read/Update/Delete Permissions to the SampleTable
+        # Give Create/Read/Update/Delete Permissions to the OrderTable
         - DynamoDBCrudPolicy:
-            TableName: !Ref SampleTable
+            TableName: !Ref OrderTable
       Environment:
         Variables:
-          SAMPLE_TABLE: !Ref SampleTable
+          ORDER_TABLE: !Ref OrderTable
           IS_OFFLINE: ""
       Events:
         Api:
@@ -139,13 +139,13 @@ Resources:
       Timeout: 100
       Description: A simple example includes a HTTP post method to add one item to a DynamoDB table.
       Policies:
-        # Give Create/Read/Update/Delete Permissions to the SampleTable
+        # Give Create/Read/Update/Delete Permissions to the OrderTable
         - DynamoDBCrudPolicy:
-            TableName: !Ref SampleTable
+            TableName: !Ref OrderTable
       Environment:
         Variables:
           # Make table name accessible as environment variable from function code during execution
-          SAMPLE_TABLE: !Ref SampleTable
+          ORDER_TABLE: !Ref OrderTable
           IS_OFFLINE: ""
       Events:
         Api:
@@ -163,10 +163,10 @@ Resources:
             Auth:
               ApiKeyRequired: false
 
-  SampleTable:
+  OrderTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: SampleTable
+      TableName: dev-butter
       AttributeDefinitions:
           # Index attributes
           - AttributeName: partitionKey
