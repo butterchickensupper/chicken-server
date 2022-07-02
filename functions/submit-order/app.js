@@ -1,12 +1,13 @@
-const crypto = require("crypto");
+const dynamodb = require('aws-sdk/clients/dynamodb');
+const { v4: uuidv4 } = require('uuid');
 
-function getRandomInt(max) {
-    return Math.floor(Math.random() * Math.floor(max)) + 1;
-}
+const tableName = process.env.SAMPLE_TABLE;
+const docClient = process.env.IS_OFFLINE === 'true' 
+    ? new dynamodb.DocumentClient({ endpoint: 'http://ddb_local:8000' })
+    : new dynamodb.DocumentClient();
 
 /**
- * Sample Lambda function which mocks the operation of buying a random number of shares for a stock.
- * For demonstration purposes, this Lambda function does not actually perform any  actual transactions. It simply returns a mocked result.
+ * Submits an order for a user
  * 
  * @param {Object} event - Input event to the Lambda function
  * @param {Object} context - Lambda Context runtime methods and attributes
@@ -15,16 +16,47 @@ function getRandomInt(max) {
  * 
  */
 exports.lambdaHandler = async (event, context) => {
-    // Get the price of the stock provided as input
-    stock_price = event["stock_price"]
-    var date = new Date();
-    // Mocked result of a stock buying transaction
-    let transaction_result = {
-        'id': crypto.randomBytes(16).toString("hex"), // Unique ID for the transaction
-        'price': stock_price.toString(), // Price of each share
-        'type': "buy", // Type of transaction(buy/ sell)
-        'qty': getRandomInt(10).toString(),  // Number of shares bought / sold(We are mocking this as a random integer between 1 and 10)
-        'timestamp': date.toISOString(),  // Timestamp of the when the transaction was completed
+    if (event.httpMethod !== 'POST') {
+        throw new Error(`submitOrderHandler only accept POST method, you tried: ${event.httpMethod}`);
     }
-    return transaction_result
+    // All log statements are written to CloudWatch
+    console.info('received:', [event]);
+
+    const timestamp = Date.now();
+    var item = {
+        partitionKey: 'dev|user-guid',
+        sortKey: 'order|guid',
+        transactionId: uuidv4(),
+        createdAt: timestamp,
+        updatedAt: timestamp,
+        version: 1,
+        objectData: event.body
+    };
+    var params = {
+        TableName : tableName,
+        ConditionExpression: 'attribute_not_exists(eventKey)',
+        Item: item
+    };
+    const data = await docClient.put(params).promise();
+    console.info('data', [data]);
+    if (!data?.Item?.objectData) {
+        return {
+            statusCode: 404,
+            body: JSON.stringify({ message: 'failed to find menu'})
+        };
+    } 
+
+    const response = {
+        statusCode: 200,
+        headers: {
+            "Access-Control-Allow-Headers" : "Content-Type",
+            "Access-Control-Allow-Origin": "*", // Allow from anywhere 
+            "Access-Control-Allow-Methods": "GET" // Allow only GET request 
+        },
+        body: data?.Item?.objectData // menu is inserted as a string
+    };
+
+    // All log statements are written to CloudWatch
+    console.info(`response from: ${event.path} statusCode: ${response.statusCode} body: ${response.body}`);
+    return response;
 };
