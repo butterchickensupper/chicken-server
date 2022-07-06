@@ -16,11 +16,44 @@ Globals:
       AllowOrigin: "'*'"
       AllowCredentials: true
 
+Parameters:
+  FirebaseProjectId:
+    Type: String
+    Default: "bcs-app-d6a66"
+
 Resources:
   ChickenApi:
     Type: AWS::Serverless::Api
     Properties:
       StageName: Prod
+      Auth:
+        Authorizers:
+          DefaultAuthorizer: FirebaseAuthorizer
+          FirebaseAuthorizer:
+            FunctionArn:
+              Fn::GetAtt:
+                - AuthFunction
+                - Arn
+            Identity:
+              Header: 'Authorization'
+            JwtConfiguration:
+              audience:
+                - !Ref FirebaseProjectId
+              issuer: !Sub https://securetoken.google.com/${FirebaseProjectId}
+
+  AuthFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/authorizer/
+      Handler: app.lambdaHandler
+      Runtime: nodejs16.x
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ChickenApi
+            Path: /auth
+            Method: GET
       
   GetMenuFunction:
     Type: AWS::Serverless::Function
@@ -189,3 +222,6 @@ Outputs:
   SubmitOrderRole:
     Description: "IAM Role created based on the specified SAM Policy Templates"
     Value: !GetAtt SubmitOrderFunction.Arn
+  EndpointUri:
+    Description: "API Gateway endpoint URL for the stage for chicken server functions"
+    Value: !Sub "https://${ChickenApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}/Prod/"

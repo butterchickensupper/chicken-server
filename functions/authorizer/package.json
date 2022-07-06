@@ -1,0 +1,12 @@
+{
+    "name": "authorizer",
+    "version": "1.0.0",
+    "main": "app.js",
+    "dependencies": {
+        "firebase-admin": "^11.0.0"
+    },
+    "devDependencies": {
+      "eslint": "^8.18.0",
+      "eslint-config-google": "^0.14.0"
+    }
+}
