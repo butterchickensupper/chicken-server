@@ -26,20 +26,20 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       StageName: Prod
-      Auth:
-        Authorizers:
-          DefaultAuthorizer: FirebaseAuthorizer
-          FirebaseAuthorizer:
-            FunctionArn:
-              Fn::GetAtt:
-                - AuthFunction
-                - Arn
-            Identity:
-              Header: 'Authorization'
-            JwtConfiguration:
-              audience:
-                - !Ref FirebaseProjectId
-              issuer: !Sub https://securetoken.google.com/${FirebaseProjectId}
+      # Auth:
+      #   Authorizers:
+      #     DefaultAuthorizer: FirebaseAuthorizer
+      #     FirebaseAuthorizer:
+      #       FunctionArn:
+      #         Fn::GetAtt:
+      #           - AuthFunction
+      #           - Arn
+      #       Identity:
+      #         Header: 'Authorization'
+      #       JwtConfiguration:
+      #         audience:
+      #           - !Ref FirebaseProjectId
+      #         issuer: !Sub https://securetoken.google.com/${FirebaseProjectId}
 
   AuthFunction:
     Type: AWS::Serverless::Function

@@ -6,9 +6,10 @@
         "javascript"
     ],
     "eslint.workingDirectories": [
-    "functions/get-menu",
-    "functions/get-orders",
-    "functions/get-settings",
-    "functions/submit-order"
+        "functions/authorizer",
+        "functions/get-menu",
+        "functions/get-orders",
+        "functions/get-settings",
+        "functions/submit-order"
     ]
 }
