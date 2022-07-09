@@ -1,15 +1,17 @@
 {
-    "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": true
-    },
-    "eslint.validate": [
-        "javascript"
-    ],
-    "eslint.workingDirectories": [
-        "functions/authorizer",
-        "functions/get-menu",
-        "functions/get-orders",
-        "functions/get-settings",
-        "functions/submit-order"
-    ]
+   "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true
+   },
+   "eslint.validate": ["javascript"],
+   "eslint.workingDirectories": [
+      "functions/authorizer",
+      "functions/get-menu",
+      "functions/get-orders",
+      "functions/get-settings",
+      "functions/submit-order"
+   ],
+   "files.exclude": {
+      ".aws-sam": true
+   },
+   "npm.enableRunFromFolder": true
 }

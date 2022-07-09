@@ -24,8 +24,7 @@ exports.lambdaHandler = async (event, context) => {
    const timestamp = Date.now()
    var item = {
       partitionKey: 'dev|user-guid',
-      sortKey: 'order|guid',
-      transactionId: uuidv4(),
+      sortKey: `order|${uuidv4()}`,
       createdAt: timestamp,
       updatedAt: timestamp,
       version: 1,
@@ -33,15 +32,14 @@ exports.lambdaHandler = async (event, context) => {
    }
    var params = {
       TableName: tableName,
-      ConditionExpression: 'attribute_not_exists(eventKey)',
       Item: item
    }
    const data = await docClient.put(params).promise()
    console.info('data', [data])
    if (!data?.Item?.objectData) {
       return {
-         statusCode: 404,
-         body: JSON.stringify({ message: 'failed to find menu' })
+         statusCode: 500,
+         body: JSON.stringify({ message: 'failed to submit order' })
       }
    }
 
@@ -50,9 +48,9 @@ exports.lambdaHandler = async (event, context) => {
       headers: {
          'Access-Control-Allow-Headers': 'Content-Type',
          'Access-Control-Allow-Origin': '*', // Allow from anywhere
-         'Access-Control-Allow-Methods': 'GET' // Allow only GET request
+         'Access-Control-Allow-Methods': 'POST' // Allow only GET request
       },
-      body: data?.Item?.objectData // menu is inserted as a string
+      body: data?.Item?.objectData // order is inserted as a string
    }
 
    // All log statements are written to CloudWatch
