@@ -20,37 +20,47 @@ exports.lambdaHandler = async (event, context) => {
    }
    // All log statements are written to CloudWatch
    console.info('received:', [event])
-
+   const body = JSON.parse(event.body)
    const timestamp = Date.now()
+   const orderId = uuidv4()
    var item = {
       partitionKey: 'dev|user-guid',
-      sortKey: `order|${uuidv4()}`,
+      sortKey: `order|${orderId}`,
       createdAt: timestamp,
       updatedAt: timestamp,
       version: 1,
-      objectData: event.body
+      objectData: JSON.stringify({
+         items: body.items,
+         billingInfo: body.billingInfo
+      })
    }
+
    var params = {
       TableName: tableName,
       Item: item
    }
    const data = await docClient.put(params).promise()
-   console.info('data', [data])
-   if (!data?.Item?.objectData) {
+   if (data.$response.error) {
       return {
          statusCode: 500,
-         body: JSON.stringify({ message: 'failed to submit order' })
+         body: JSON.stringify({ message: data.$response.error.message })
       }
    }
 
    const response = {
       statusCode: 200,
       headers: {
-         'Access-Control-Allow-Headers': 'Content-Type',
+         'Access-Control-Allow-Headers': 'Content-Type, Authorization',
          'Access-Control-Allow-Origin': '*', // Allow from anywhere
-         'Access-Control-Allow-Methods': 'POST' // Allow only GET request
+         'Access-Control-Allow-Methods': 'POST,OPTIONS' // Allow only POST request
       },
-      body: data?.Item?.objectData // order is inserted as a string
+      body: JSON.stringify({
+         id: orderId,
+         items: body.items,
+         billingInfo: body.billingInfo,
+         createdAt: timestamp,
+         updatedAt: timestamp
+      })
    }
 
    // All log statements are written to CloudWatch
