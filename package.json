@@ -1,21 +1,22 @@
 {
-  "name": "chicken-server",
-  "version": "1.0.0",
-  "description": "scripts for running the app",
-  "scripts": {
-    "start": "sam local start-api --template template.yaml --docker-network lambda-local --skip-pull-image -n env.json",
-    "start-dynamo": "docker-compose up -d",
-    "seed-menu": "aws dynamodb batch-write-item --request-items file://menu.json --endpoint-url http://localhost:8000",
-    "deploy": "sam deploy"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/butterchickensupper/chicken-server.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/butterchickensupper/chicken-server/issues"
-  },
-  "homepage": "https://github.com/butterchickensupper/chicken-server#readme"
+   "name": "chicken-server",
+   "version": "1.0.0",
+   "description": "scripts for running the app",
+   "scripts": {
+      "start": "sam local start-api --template template.yaml --docker-network lambda-local --skip-pull-image -n env.json",
+      "start-dynamo": "docker-compose up -d",
+      "stop-dynamo": "docker-compose down",
+      "seed-menu": "aws dynamodb batch-write-item --request-items file://menu.json --endpoint-url http://localhost:8000",
+      "deploy": "sam deploy"
+   },
+   "repository": {
+      "type": "git",
+      "url": "git+https://github.com/butterchickensupper/chicken-server.git"
+   },
+   "author": "",
+   "license": "ISC",
+   "bugs": {
+      "url": "https://github.com/butterchickensupper/chicken-server/issues"
+   },
+   "homepage": "https://github.com/butterchickensupper/chicken-server#readme"
 }
