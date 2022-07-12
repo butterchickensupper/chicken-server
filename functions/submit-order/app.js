@@ -46,12 +46,12 @@ exports.lambdaHandler = async (event, context) => {
          body: JSON.stringify({ message: data.$response.error.message })
       }
    }
-
    const response = {
       statusCode: 200,
       headers: {
-         'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-         'Access-Control-Allow-Origin': '*', // Allow from anywhere
+         'Access-Control-Allow-Credentials': 'true',
+         'Access-Control-Allow-Headers': 'Content-Type,Authorization',
+         'Access-Control-Allow-Origin': 'http://localhost:4200',
          'Access-Control-Allow-Methods': 'POST,OPTIONS' // Allow only POST request
       },
       body: JSON.stringify({

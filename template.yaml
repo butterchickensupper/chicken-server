@@ -1,227 +1,227 @@
-AWSTemplateFormatVersion: "2010-09-09"
+AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  sam-app
+   sam-app
 
-  BCS: Butter Chicken Supper
+   BCS: Butter Chicken Supper
 
 Globals:
-  Function:
-    Tracing: Active
-  Api:
-    TracingEnabled: True
-    Cors:
-      AllowMethods: "'GET,POST,OPTIONS'"
-      AllowHeaders: "'content-type'"
-      AllowOrigin: "'*'"
-      AllowCredentials: true
+   Function:
+      Tracing: Active
+   Api:
+      TracingEnabled: True
+      Cors:
+         AllowMethods: "'GET,POST,OPTIONS'"
+         AllowHeaders: "'content-type,authorization'"
+         AllowOrigin: "'http://localhost:4200'"
+         AllowCredentials: true
 
 Parameters:
-  FirebaseProjectId:
-    Type: String
-    Default: "bcs-app-d6a66"
+   FirebaseProjectId:
+      Type: String
+      Default: 'bcs-app-d6a66'
 
 Resources:
-  ChickenApi:
-    Type: AWS::Serverless::Api
-    Properties:
-      StageName: Prod
-      # Auth:
-      #   Authorizers:
-      #     DefaultAuthorizer: FirebaseAuthorizer
-      #     FirebaseAuthorizer:
-      #       FunctionArn:
-      #         Fn::GetAtt:
-      #           - AuthFunction
-      #           - Arn
-      #       Identity:
-      #         Header: 'Authorization'
-      #       JwtConfiguration:
-      #         audience:
-      #           - !Ref FirebaseProjectId
-      #         issuer: !Sub https://securetoken.google.com/${FirebaseProjectId}
+   ChickenApi:
+      Type: AWS::Serverless::Api
+      Properties:
+         StageName: Prod
+         # Auth:
+         #   Authorizers:
+         #     DefaultAuthorizer: FirebaseAuthorizer
+         #     FirebaseAuthorizer:
+         #       FunctionArn:
+         #         Fn::GetAtt:
+         #           - AuthFunction
+         #           - Arn
+         #       Identity:
+         #         Header: 'Authorization'
+         #       JwtConfiguration:
+         #         audience:
+         #           - !Ref FirebaseProjectId
+         #         issuer: !Sub https://securetoken.google.com/${FirebaseProjectId}
 
-  AuthFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: functions/authorizer/
-      Handler: app.lambdaHandler
-      Runtime: nodejs16.x
-      Events:
-        Api:
-          Type: Api
-          Properties:
-            RestApiId: !Ref ChickenApi
-            Path: /auth
-            Method: GET
-      
-  GetMenuFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: functions/get-menu/
-      Handler: app.lambdaHandler
-      Runtime: nodejs16.x
-      Architectures:
-        - x86_64
-      MemorySize: 128
-      Timeout: 100
-      Description: Returns the menu for BCS.
-      Policies:
-        # Give Create/Read/Update/Delete Permissions to the OrderTable
-        - DynamoDBCrudPolicy:
-            TableName: !Ref OrderTable
-      Environment:
-        Variables:
-          ORDER_TABLE: !Ref OrderTable
-          IS_OFFLINE: ""
-      Events:
-        Api:
-          Type: Api
-          Properties:
-            Path: /menu
-            Method: GET
-            RestApiId: !Ref ChickenApi
-        Options:
-          Type: Api
-          Properties:
-            RestApiId: !Ref ChickenApi
-            Path: /menu
-            Method: options
-            Auth:
-              ApiKeyRequired: false
+   AuthFunction:
+      Type: AWS::Serverless::Function
+      Properties:
+         CodeUri: functions/authorizer/
+         Handler: app.lambdaHandler
+         Runtime: nodejs16.x
+         Events:
+            Api:
+               Type: Api
+               Properties:
+                  RestApiId: !Ref ChickenApi
+                  Path: /auth
+                  Method: GET
 
-  GetOrdersFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: functions/get-orders/
-      Handler: app.lambdaHandler
-      Runtime: nodejs16.x
-      Architectures:
-        - x86_64
-      MemorySize: 128
-      Timeout: 100
-      Description: Returns the orders for BCS.
-      Policies:
-        # Give Create/Read/Update/Delete Permissions to the OrderTable
-        - DynamoDBCrudPolicy:
-            TableName: !Ref OrderTable
-      Environment:
-        Variables:
-          ORDER_TABLE: !Ref OrderTable
-          IS_OFFLINE: ""
-      Events:
-        Api:
-          Type: Api
-          Properties:
-            Path: /orders
-            Method: GET
-            RestApiId: !Ref ChickenApi
-        Options:
-          Type: Api
-          Properties:
-            RestApiId: !Ref ChickenApi
-            Path: /orders
-            Method: options
-            Auth:
-              ApiKeyRequired: false
+   GetMenuFunction:
+      Type: AWS::Serverless::Function
+      Properties:
+         CodeUri: functions/get-menu/
+         Handler: app.lambdaHandler
+         Runtime: nodejs16.x
+         Architectures:
+            - x86_64
+         MemorySize: 128
+         Timeout: 100
+         Description: Returns the menu for BCS.
+         Policies:
+            # Give Create/Read/Update/Delete Permissions to the OrderTable
+            - DynamoDBCrudPolicy:
+                 TableName: !Ref OrderTable
+         Environment:
+            Variables:
+               ORDER_TABLE: !Ref OrderTable
+               IS_OFFLINE: ''
+         Events:
+            Api:
+               Type: Api
+               Properties:
+                  Path: /menu
+                  Method: GET
+                  RestApiId: !Ref ChickenApi
+            Options:
+               Type: Api
+               Properties:
+                  RestApiId: !Ref ChickenApi
+                  Path: /menu
+                  Method: options
+                  Auth:
+                     ApiKeyRequired: false
 
-  GetSettingsFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: functions/get-settings/
-      Handler: app.lambdaHandler
-      Runtime: nodejs16.x
-      Architectures:
-        - x86_64
-      MemorySize: 128
-      Timeout: 100
-      Description: Returns the user settings for BCS.
-      Policies:
-        # Give Create/Read/Update/Delete Permissions to the OrderTable
-        - DynamoDBCrudPolicy:
-            TableName: !Ref OrderTable
-      Environment:
-        Variables:
-          ORDER_TABLE: !Ref OrderTable
-          IS_OFFLINE: ""
-      Events:
-        Api:
-          Type: Api
-          Properties:
-            Path: /settings
-            Method: GET
-            RestApiId: !Ref ChickenApi
-        Options:
-          Type: Api
-          Properties:
-            RestApiId: !Ref ChickenApi
-            Path: /settings
-            Method: options
-            Auth:
-              ApiKeyRequired: false
+   GetOrdersFunction:
+      Type: AWS::Serverless::Function
+      Properties:
+         CodeUri: functions/get-orders/
+         Handler: app.lambdaHandler
+         Runtime: nodejs16.x
+         Architectures:
+            - x86_64
+         MemorySize: 128
+         Timeout: 100
+         Description: Returns the orders for BCS.
+         Policies:
+            # Give Create/Read/Update/Delete Permissions to the OrderTable
+            - DynamoDBCrudPolicy:
+                 TableName: !Ref OrderTable
+         Environment:
+            Variables:
+               ORDER_TABLE: !Ref OrderTable
+               IS_OFFLINE: ''
+         Events:
+            Api:
+               Type: Api
+               Properties:
+                  Path: /orders
+                  Method: GET
+                  RestApiId: !Ref ChickenApi
+            Options:
+               Type: Api
+               Properties:
+                  RestApiId: !Ref ChickenApi
+                  Path: /orders
+                  Method: options
+                  Auth:
+                     ApiKeyRequired: false
 
-  SubmitOrderFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: functions/submit-order/
-      Handler: app.lambdaHandler
-      Runtime: nodejs16.x
-      Architectures:
-        - x86_64
-      MemorySize: 128
-      Timeout: 100
-      Description: A simple example includes a HTTP post method to add one item to a DynamoDB table.
-      Policies:
-        # Give Create/Read/Update/Delete Permissions to the OrderTable
-        - DynamoDBCrudPolicy:
-            TableName: !Ref OrderTable
-      Environment:
-        Variables:
-          # Make table name accessible as environment variable from function code during execution
-          ORDER_TABLE: !Ref OrderTable
-          IS_OFFLINE: ""
-      Events:
-        Api:
-          Type: Api
-          Properties:
-            Path: /order
-            Method: POST
-            RestApiId: !Ref ChickenApi
-        Options:
-          Type: Api
-          Properties:
-            RestApiId: !Ref ChickenApi
-            Path: /order
-            Method: options
-            Auth:
-              ApiKeyRequired: false
+   GetSettingsFunction:
+      Type: AWS::Serverless::Function
+      Properties:
+         CodeUri: functions/get-settings/
+         Handler: app.lambdaHandler
+         Runtime: nodejs16.x
+         Architectures:
+            - x86_64
+         MemorySize: 128
+         Timeout: 100
+         Description: Returns the user settings for BCS.
+         Policies:
+            # Give Create/Read/Update/Delete Permissions to the OrderTable
+            - DynamoDBCrudPolicy:
+                 TableName: !Ref OrderTable
+         Environment:
+            Variables:
+               ORDER_TABLE: !Ref OrderTable
+               IS_OFFLINE: ''
+         Events:
+            Api:
+               Type: Api
+               Properties:
+                  Path: /settings
+                  Method: GET
+                  RestApiId: !Ref ChickenApi
+            Options:
+               Type: Api
+               Properties:
+                  RestApiId: !Ref ChickenApi
+                  Path: /settings
+                  Method: options
+                  Auth:
+                     ApiKeyRequired: false
 
-  OrderTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      TableName: dev-butter
-      AttributeDefinitions:
-          # Index attributes
-          - AttributeName: partitionKey
-            AttributeType: S
-          - AttributeName: sortKey
-            AttributeType: S
-      KeySchema:
-          - AttributeName: partitionKey
-            KeyType: HASH
-          - AttributeName: sortKey
-            KeyType: RANGE
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
+   SubmitOrderFunction:
+      Type: AWS::Serverless::Function
+      Properties:
+         CodeUri: functions/submit-order/
+         Handler: app.lambdaHandler
+         Runtime: nodejs16.x
+         Architectures:
+            - x86_64
+         MemorySize: 128
+         Timeout: 100
+         Description: A simple example includes a HTTP post method to add one item to a DynamoDB table.
+         Policies:
+            # Give Create/Read/Update/Delete Permissions to the OrderTable
+            - DynamoDBCrudPolicy:
+                 TableName: !Ref OrderTable
+         Environment:
+            Variables:
+               # Make table name accessible as environment variable from function code during execution
+               ORDER_TABLE: !Ref OrderTable
+               IS_OFFLINE: ''
+         Events:
+            Api:
+               Type: Api
+               Properties:
+                  Path: /order
+                  Method: POST
+                  RestApiId: !Ref ChickenApi
+            Options:
+               Type: Api
+               Properties:
+                  RestApiId: !Ref ChickenApi
+                  Path: /order
+                  Method: options
+                  Auth:
+                     ApiKeyRequired: false
+
+   OrderTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+         TableName: dev-butter
+         AttributeDefinitions:
+            # Index attributes
+            - AttributeName: partitionKey
+              AttributeType: S
+            - AttributeName: sortKey
+              AttributeType: S
+         KeySchema:
+            - AttributeName: partitionKey
+              KeyType: HASH
+            - AttributeName: sortKey
+              KeyType: RANGE
+         ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
 
 Outputs:
-  SubmitOrderArn:
-    Description: "Stock Trading state machine ARN"
-    Value: !Ref SubmitOrderFunction
-  SubmitOrderRole:
-    Description: "IAM Role created based on the specified SAM Policy Templates"
-    Value: !GetAtt SubmitOrderFunction.Arn
-  EndpointUri:
-    Description: "API Gateway endpoint URL for the stage for chicken server functions"
-    Value: !Sub "https://${ChickenApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}/Prod/"
+   SubmitOrderArn:
+      Description: 'Stock Trading state machine ARN'
+      Value: !Ref SubmitOrderFunction
+   SubmitOrderRole:
+      Description: 'IAM Role created based on the specified SAM Policy Templates'
+      Value: !GetAtt SubmitOrderFunction.Arn
+   EndpointUri:
+      Description: 'API Gateway endpoint URL for the stage for chicken server functions'
+      Value: !Sub 'https://${ChickenApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}/Prod/'
