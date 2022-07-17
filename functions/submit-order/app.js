@@ -19,7 +19,7 @@ exports.lambdaHandler = async (event, context) => {
       throw new Error(`submitOrderHandler only accept POST method, you tried: ${event.httpMethod}`)
    }
    // All log statements are written to CloudWatch
-   console.info('received:', [event])
+   console.info('jwt:', [event.headers])
    const body = JSON.parse(event.body)
    const timestamp = Date.now()
    const orderId = uuidv4()
