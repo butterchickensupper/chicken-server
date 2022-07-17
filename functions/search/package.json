@@ -1,0 +1,21 @@
+{
+  "name": "search",
+  "version": "1.0.0",
+  "description": "Search Orders API for BCS",
+  "main": "app.js",
+  "repository": "",
+  "author": "SAM CLI",
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.1167.0"
+  },
+  "scripts": {
+    "test": "mocha tests/unit/"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "eslint": "^8.18.0",
+    "eslint-config-google": "^0.14.0",
+    "mocha": "^9.1.4"
+  }
+}

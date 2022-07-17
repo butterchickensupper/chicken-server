@@ -196,6 +196,42 @@ Resources:
                   Auth:
                      ApiKeyRequired: false
 
+   SearchOrderFunction:
+      Type: AWS::Serverless::Function
+      Properties:
+         CodeUri: functions/search/
+         Handler: app.lambdaHandler
+         Runtime: nodejs16.x
+         Architectures:
+            - x86_64
+         MemorySize: 128
+         Timeout: 100
+         Description: Search dynamodb for past orders by date.
+         Policies:
+            # Give Create/Read/Update/Delete Permissions to the OrderTable
+            - DynamoDBCrudPolicy:
+                 TableName: !Ref OrderTable
+         Environment:
+            Variables:
+               # Make table name accessible as environment variable from function code during execution
+               ORDER_TABLE: !Ref OrderTable
+               IS_OFFLINE: ''
+         Events:
+            Api:
+               Type: Api
+               Properties:
+                  Path: /search
+                  Method: POST
+                  RestApiId: !Ref ChickenApi
+            Options:
+               Type: Api
+               Properties:
+                  RestApiId: !Ref ChickenApi
+                  Path: /search
+                  Method: options
+                  Auth:
+                     ApiKeyRequired: false
+
    OrderTable:
       Type: AWS::DynamoDB::Table
       Properties:
