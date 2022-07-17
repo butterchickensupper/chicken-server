@@ -60,7 +60,7 @@ exports.lambdaHandler = async (event, context) => {
          'Access-Control-Allow-Origin': 'http://localhost:4200',
          'Access-Control-Allow-Methods': 'GET,OPTIONS' // Allow only GET request
       },
-      body: JSON.stringify(body)
+      body: JSON.stringify(body.sort((a, b) => b.createdAt - a.createdAt))
    }
 
    // All log statements are written to CloudWatch
