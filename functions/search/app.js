@@ -20,6 +20,12 @@ exports.lambdaHandler = async (event, context) => {
    // All log statements are written to CloudWatch
    console.info('jwt:', [event.headers])
    const requestBody = JSON.parse(event.body) // get dates from here
+   if (!requestBody.startDate) {
+      return {
+         statusCode: 500,
+         body: JSON.stringify({ message: 'failed to find date to search by' })
+      }
+   }
 
    var params = {
       TableName: tableName,
